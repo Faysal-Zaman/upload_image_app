@@ -1,5 +1,4 @@
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 import 'package:upload_image_app/pages/signin_page.dart';
 import 'package:upload_image_app/pages/signup_page.dart';
 
@@ -19,4 +18,8 @@ class _AuthPageState extends State<AuthPage> {
         ? SignInPage(onClickedSignUp: toggle)
         : SignUpPage(onClickedSignUp: toggle);
   }
+
+  void toggle() => setState(() {
+        isLogin = !isLogin;
+      });
 }

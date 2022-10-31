@@ -1,7 +1,9 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class SignUpPage extends StatefulWidget {
   final VoidCallback onClickedSignUp;
@@ -12,6 +14,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
@@ -26,6 +29,20 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future signUp() async {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) {
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
@@ -34,6 +51,8 @@ class _SignUpPageState extends State<SignUpPage> {
     } on FirebaseAuthException catch (e) {
       print(e);
     }
+    //Navigator.of(context) is not working...
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
   @override
@@ -43,65 +62,79 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Container(
           padding: const EdgeInsets.all(10),
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                const Text(
-                  "Sign up",
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  const Text(
+                    "Sign up",
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 50),
-                TextField(
-                  controller: emailController,
-                  cursorColor: Colors.deepPurple,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(label: Text("Email")),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: passwordController,
-                  cursorColor: Colors.deepPurple,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(label: Text("Password")),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.lock_open,
-                    size: 32,
+                  const SizedBox(height: 50),
+                  TextFormField(
+                    controller: emailController,
+                    cursorColor: Colors.deepPurple,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      label: Text("Email"),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (email) =>
+                        email != null && EmailValidator.validate(email)
+                            ? 'Enter a valid email'
+                            : null,
                   ),
-                  label: const Text(
-                    "Sign Up",
-                    style: TextStyle(fontSize: 20),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: passwordController,
+                    cursorColor: Colors.deepPurple,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(label: Text("Password")),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) => value != null && value.length < 6
+                        ? 'Enter min. 6 characters'
+                        : null,
                   ),
-                ),
-                const SizedBox(height: 20),
-                RichText(
-                  text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                      text: "Already have an Account?  ",
-                      children: [
-                        TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = widget.onClickedSignUp,
-                          style: const TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple,
-                            decoration: TextDecoration.underline,
-                          ),
-                          text: "Sign In",
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.lock_open,
+                      size: 32,
+                    ),
+                    label: const Text(
+                      "Sign Up",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  RichText(
+                    text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 20,
                         ),
-                      ]),
-                ),
-              ],
+                        text: "Already have an Account?  ",
+                        children: [
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = widget.onClickedSignUp,
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                              decoration: TextDecoration.underline,
+                            ),
+                            text: "Sign In",
+                          ),
+                        ]),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
