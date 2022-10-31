@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import '../utils.dart';
+import 'forgot_password_page.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback onClickedSignUp;
@@ -48,6 +50,8 @@ class _SignInPageState extends State<SignInPage> {
       );
     } on FirebaseAuthException catch (e) {
       print(e);
+
+      Utils.showSnackBar(e.message);
     }
     //Navigator.of(context) is not working...
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
@@ -109,18 +113,34 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  GestureDetector(
+                    child: const Text(
+                      "Forgot password?",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          color: Colors.deepPurple),
+                    ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordPage(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   RichText(
                     text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 20,
-                        ),
+                        style:
+                            const TextStyle(fontSize: 15, color: Colors.black),
                         text: "No Account?  ",
                         children: [
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = widget.onClickedSignUp,
                             style: const TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.deepPurple,
                               decoration: TextDecoration.underline,

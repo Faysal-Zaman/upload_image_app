@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import '../utils.dart';
 
 class SignUpPage extends StatefulWidget {
   final VoidCallback onClickedSignUp;
@@ -50,6 +51,8 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     } on FirebaseAuthException catch (e) {
       print(e);
+
+      Utils.showSnackBar(e.message);
     }
     //Navigator.of(context) is not working...
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
@@ -116,7 +119,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   RichText(
                     text: TextSpan(
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 15,
+                          color: Colors.black,
                         ),
                         text: "Already have an Account?  ",
                         children: [
@@ -124,7 +128,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = widget.onClickedSignUp,
                             style: const TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.deepPurple,
                               decoration: TextDecoration.underline,
