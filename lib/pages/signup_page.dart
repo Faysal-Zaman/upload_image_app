@@ -88,7 +88,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (email) =>
-                        email != null && EmailValidator.validate(email)
+                        email == null && EmailValidator.validate(email!)
                             ? 'Enter a valid email'
                             : null,
                   ),
@@ -105,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: signUp,
                     icon: const Icon(
                       Icons.lock_open,
                       size: 32,

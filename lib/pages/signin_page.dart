@@ -85,12 +85,13 @@ class _SignInPageState extends State<SignInPage> {
                     decoration: const InputDecoration(label: Text("Email")),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (email) =>
-                        email != null && EmailValidator.validate(email)
+                        email == null && EmailValidator.validate(email!)
                             ? 'Enter a valid email'
                             : null,
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
+                    obscureText: true,
                     controller: passwordController,
                     cursorColor: Colors.deepPurple,
                     textInputAction: TextInputAction.done,

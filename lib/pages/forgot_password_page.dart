@@ -75,7 +75,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (email) =>
-                      email != null && EmailValidator.validate(email)
+                      email == null && EmailValidator.validate(email!)
                           ? 'Enter a valid email'
                           : null,
                 ),
