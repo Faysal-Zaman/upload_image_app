@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:upload_image_app/pages/display_image_page.dart';
 
 class ImagePage extends StatefulWidget {
   ImagePage({super.key});
@@ -26,21 +26,37 @@ class _ImagePageState extends State<ImagePage> {
     });
   }
 
-  Future uploadFile() async {
-    final path = 'files/${pickedFile!.name}';
-    final file = File(pickedFile!.path!);
-
-    final ref = FirebaseStorage.instance.ref().child(path);
-    uploadTask = ref.putFile(file);
-
-    final snapshot = await uploadTask!.whenComplete(() {});
-
-    final urlDownload = await snapshot.ref.getDownloadURL();
-    print("Download Link: " + urlDownload);
-  }
-
   @override
   Widget build(BuildContext context) {
+    Future uploadFile() async {
+      final path = 'files/${pickedFile!.name}';
+      final file = File(pickedFile!.path!);
+
+      final ref = FirebaseStorage.instance.ref().child(path);
+      uploadTask = ref.putFile(file);
+
+      final snapshot = await uploadTask!.whenComplete(() {});
+
+      final urlDownload = await snapshot.ref.getDownloadURL();
+      print("Download Link: " + urlDownload);
+
+      const snackBar = SnackBar(
+        content: Text('Uploaded Successfully...'),
+      );
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+        pickedFile = null;
+      });
+
+      await FirebaseFirestore.instance
+          .collection("images")
+          .add({"imageUrl": urlDownload.toString()})
+          .then((value) => print("added Successfully"))
+          .onError((error, stackTrace) => print("Error"));
+    }
+
     return Scaffold(
       body: Center(
         child: Container(
@@ -85,18 +101,23 @@ class _ImagePageState extends State<ImagePage> {
                 label: const Text("Get Image"),
               ),
               TextButton.icon(
-                onPressed: () {
+                onPressed: () async {
                   uploadFile();
-                  const snackBar = SnackBar(
-                    content: Text('Uploaded Successfully...'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  setState(() {
-                    pickedFile = null;
-                  });
                 },
                 icon: const Icon(Icons.upload),
                 label: const Text("Upload Image"),
+              ),
+              const SizedBox(height: 40),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) {
+                      return const DisplayImagePage();
+                    },
+                  ));
+                },
+                icon: const Icon(Icons.route),
+                label: const Text("View Images"),
               ),
             ],
           ),
