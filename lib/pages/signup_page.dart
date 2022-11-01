@@ -94,6 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
+                    obscureText: true,
                     controller: passwordController,
                     cursorColor: Colors.deepPurple,
                     textInputAction: TextInputAction.done,
