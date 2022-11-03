@@ -2,12 +2,13 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:upload_image_app/pages/display_image_page.dart';
 
 class ImagePage extends StatefulWidget {
-  ImagePage({super.key});
+  const ImagePage({super.key});
 
   @override
   State<ImagePage> createState() => _ImagePageState();
@@ -58,6 +59,20 @@ class _ImagePageState extends State<ImagePage> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        leading: FittedBox(
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () => FirebaseAuth.instance.signOut(),
+              child: const Text('Logout'),
+            ),
+          ),
+        ),
+      ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(10),
