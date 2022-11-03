@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -39,7 +40,24 @@ class _DisplayImagePageState extends State<DisplayImagePage> {
                 crossAxisSpacing: 4,
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  return Image.network(snapshot.data!.docs[index]["imageUrl"]);
+                  //with a place holder
+                  return CachedNetworkImage(
+                    imageUrl: snapshot.data!.docs[index]["imageUrl"],
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  );
+
+                  // //with a progressIndicator
+                  // return CachedNetworkImage(
+                  //   imageUrl: snapshot.data!.docs[index]["imageUrl"],
+                  //   progressIndicatorBuilder:
+                  //       (context, url, downloadProgress) =>
+                  //           CircularProgressIndicator(
+                  //               value: downloadProgress.progress),
+                  //   errorWidget: (context, url, error) => Icon(Icons.error),
+                  // );
                 },
               ),
             );
