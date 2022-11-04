@@ -7,6 +7,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:upload_image_app/pages/display_image_page.dart';
 
+import '../main.dart';
+
 class ImagePage extends StatefulWidget {
   const ImagePage({super.key});
 
@@ -30,13 +32,25 @@ class _ImagePageState extends State<ImagePage> {
   @override
   Widget build(BuildContext context) {
     Future uploadFile() async {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
       final path = 'files/${pickedFile!.name}';
       final file = File(pickedFile!.path!);
 
       final ref = FirebaseStorage.instance.ref().child(path);
       uploadTask = ref.putFile(file);
 
-      final snapshot = await uploadTask!.whenComplete(() {});
+      TaskSnapshot? snapshot;
+      snapshot = await uploadTask!.whenComplete(() {});
+
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
 
       final urlDownload = await snapshot.ref.getDownloadURL();
       print("Download Link: " + urlDownload);

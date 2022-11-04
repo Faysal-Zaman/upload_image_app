@@ -53,7 +53,7 @@ class _SignInPageState extends State<SignInPage> {
 
       Utils.showSnackBar(e.message);
     }
-    //Navigator.of(context) is not working...
+    //Navigator.of(context).pop(); is not working...
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
